@@ -1,6 +1,6 @@
 {
   "name": "vue-qiniu-upload",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "vue-qiniu-upload",
   "author": "Jogiter <jogiter.g@gmail.com>",
   "main": "lib/vue-qiniu-upload.min.js",

@@ -1,12 +1,11 @@
 <template>
     <div id="app">
-        <upload :action="action" :token="token" @on-upload="uploadFile" :accept="accept" :on-e="uploadErr">
+        <upload :action="action" :token="token" @on-upload="uploadFile" :accept="accept" @on-error="uploadErr" @on-progress="progress">
             <template slot="form">
-                <input name="key" type="hidden" :value="key">
             </template>
-            <p slot="picker" class="upload-btn">
-                <span>上传图片</span>
-            </p>
+            <template slot="picker">
+                <span class="btn">上传图片</span>
+            </template>
         </upload>
         <div class="block">
             <h2>上传结果</h2>
@@ -17,7 +16,10 @@
             <img :src="imgHash" alt="imgHash" class="viewimg">
             <img :src="imgKey" alt="imgKey" class="viewimg">
         </div>
-        <div class="block" id="ajaxErr"></div>
+        <div class="block" id="ajaxErr" v-show="uploadMsg.length">
+            <h4>uploadMsg: </h4>
+            <p v-for="(item, index) in uploadMsg" :key="index">{{item}}</p>
+        </div>
     </div>
 </template>
 
@@ -31,11 +33,11 @@
         data: () => {
             return {
                 action: 'http://upload.qiniu.com/', // 替换自己的上传链接
-                accept: 'image/*',
-                key: Math.floor(Math.random() * 100) + Math.random().toString(32).slice(8),
-                token: 'QWYn5TFQsLLU1pL5MFEmX3s5DmHdUThav9WyOWOm:Mfqr60SDX7O1eK_yjojyXQCbnbU=:eyJkZWxldGVBZnRlckRheXMiOjcsInNjb3BlIjoianNzZGsiLCJkZWFkbGluZSI6MTUwMjcwMTAyOH0=', // 从[http://jssdk.demo.qiniu.io/formdata]获取
+                accept: 'image/png, image/jpeg, image/gif',
+                token: 'QWYn5TFQsLLU1pL5MFEmX3s5DmHdUThav9WyOWOm:JcGnWGIzc0POt2eEWWqUUsW8bN0=:eyJkZWxldGVBZnRlckRheXMiOjcsInNjb3BlIjoianNzZGsiLCJkZWFkbGluZSI6MTUwMjc5MTczMX0=', // 从[http://jssdk.demo.qiniu.io/formdata]获取
                 imghash: '',
-                imgkey: ''
+                imgkey: '',
+                uploadMsg: []
             }
         },
         computed: {
@@ -52,8 +54,10 @@
                 this.imgkey = res.key
             },
             uploadErr (res) {
-                console.log(res)
-                alert(res)
+                this.uploadMsg.push(JSON.stringify(res))
+            },
+            progress (e) {
+                this.uploadMsg.push(`e.loaded: ${e.loaded}, e.total: ${e.total}, percent: ${(e.loaded / e.total) * 100}`)
             }
         }
     }
@@ -71,6 +75,11 @@
     .block,
     .viewimg {
         margin: 15px;
+    }
+    .btn {
+        padding: 5px 10px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
     }
     .viewimg {
         max-width: 200px;

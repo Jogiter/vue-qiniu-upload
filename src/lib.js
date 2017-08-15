@@ -1,2 +1,2 @@
-import * as vueAddress from './components/address.vue'
-export default vueAddress
+import * as vueUpload from './components/upload.vue'
+export default vueUpload

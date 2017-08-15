@@ -7,8 +7,8 @@ install
 -------
 
 ```sh
-> npm install vue-qiniu-upload --save
 > npm install vue-resource --save
+> npm install vue-qiniu-upload --save
 ```
 
 import
@@ -27,19 +27,25 @@ usage
 ```vue
 <template>
     <div id="app">
-        <upload :action="action" :token="token" @on-upload="uploadFile" :accept="accept">
-            <p slot="picker" class="upload-btn">
-                <span>上传图片</span>
-            </p>
+        <upload :action="action" :token="token" :accept="accept" @on-upload="uploadFile" @on-error="uploadErr" @on-progress="progress">
+            <template slot="form">
+            </template>
+            <template slot="picker">
+                <span class="btn">上传图片</span>
+            </template>
         </upload>
         <div class="block">
             <h2>上传结果</h2>
             <div id="result">
-                <p>hash: {{hash}}</p>
-                <p>key: {{key}}</p>
+                <p>hash: {{imghash}}</p>
+                <p>key: {{imgkey}}</p>
             </div>
-            <img :src="imgHash" alt="" class="viewimg">
-            <img :src="imgKey" alt="" class="viewimg">
+            <img :src="imgHash" alt="imgHash" class="viewimg">
+            <img :src="imgKey" alt="imgKey" class="viewimg">
+        </div>
+        <div class="block" id="ajaxErr" v-show="uploadMsg.length">
+            <h4>uploadMsg: </h4>
+            <p v-for="(item, index) in uploadMsg" :key="index">{{item}}</p>
         </div>
     </div>
 </template>
@@ -54,24 +60,31 @@ usage
         data: () => {
             return {
                 action: 'http://upload.qiniu.com/', // 替换自己的上传链接
-                accept: 'image/*',
-                token: 'QWYn5TFQsLLU1pL5MFEmX3s5DmHdUThav9WyOWOm:Mfqr60SDX7O1eK_yjojyXQCbnbU=:eyJkZWxldGVBZnRlckRheXMiOjcsInNjb3BlIjoianNzZGsiLCJkZWFkbGluZSI6MTUwMjcwMTAyOH0=', // 从[http://jssdk.demo.qiniu.io/formdata]获取
-                hash: '',
-                key: ''
+                accept: 'image/png, image/jpeg, image/gif',
+                token: 'QWYn5TFQsLLU1pL5MFEmX3s5DmHdUThav9WyOWOm:JcGnWGIzc0POt2eEWWqUUsW8bN0=:eyJkZWxldGVBZnRlckRheXMiOjcsInNjb3BlIjoianNzZGsiLCJkZWFkbGluZSI6MTUwMjc5MTczMX0=', // 从[http://jssdk.demo.qiniu.io/formdata]源码获取token
+                imghash: '',
+                imgkey: '',
+                uploadMsg: []
             }
         },
         computed: {
             imgHash: function () {
-                return `http://7j1xky.com2.z0.glb.qiniucdn.com/${this.hash}`
+                return `http://7j1xky.com2.z0.glb.qiniucdn.com/${this.imghash}`
             },
             imgKey: function () {
-                return `http://7j1xky.com2.z0.glb.qiniucdn.com/${this.key}`
+                return `http://7j1xky.com2.z0.glb.qiniucdn.com/${this.imgkey}`
             }
         },
         methods: {
             uploadFile (res) {
-                this.hash = res.hash
-                this.key = res.key
+                this.imghash = res.hash
+                this.imgkey = res.key
+            },
+            uploadErr (res) {
+                this.uploadMsg.push(JSON.stringify(res))
+            },
+            progress (e) {
+                this.uploadMsg.push(`e.loaded: ${e.loaded}, e.total: ${e.total}, percent: ${(e.loaded / e.total) * 100}`)
             }
         }
     }
@@ -90,8 +103,17 @@ usage
     .viewimg {
         margin: 15px;
     }
+    .btn {
+        padding: 5px 10px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+    }
     .viewimg {
         max-width: 200px;
+        border: 1px dashed #ccc;
+        border-radius: 4px;
+        padding: 5px;
+        background-color: #ccc;
     }
 </style>
 ```
