@@ -1,7 +1,7 @@
 vue-qiniu-upload
 ================
 
-> 多级联动地址选择器
+> vue2.0 七牛图片上传
 
 install
 -------
@@ -20,6 +20,8 @@ import vueUpload from 'vue-qiniu-upload'
 
 Vue.component('vue-upload', vueUpload)
 ```
+
+> note: 需要从[http://jssdk.demo.qiniu.io/formdata]源码获取token
 
 usage
 -----
