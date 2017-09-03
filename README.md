@@ -1,7 +1,7 @@
 vue-qiniu-upload
 ================
 
-> vue2.0 七牛图片上传
+> vue2.0 七牛图片上传，支持多张上传
 
 install
 -------
@@ -29,7 +29,7 @@ usage
 ```vue
 <template>
     <div id="app">
-        <upload :action="action" :token="token" :accept="accept" @on-upload="uploadFile" @on-error="uploadErr" @on-progress="progress">
+        <upload :action="action" :token="token" :multiple="multiple" :accept="accept" @on-upload="uploadFile" @on-error="uploadErr" @on-progress="progress">
             <template slot="form">
             </template>
             <template slot="picker">
@@ -63,6 +63,7 @@ usage
             return {
                 action: 'http://upload.qiniu.com/', // 替换自己的上传链接
                 accept: 'image/png, image/jpeg, image/gif',
+                multiple: true,
                 // 从[http://jssdk.demo.qiniu.io/formdata]源码获取token
                 token: 'QWYn5TFQsLLU1pL5MFEmX3s5DmHdUThav9WyOWOm:JcGnWGIzc0POt2eEWWqUUsW8bN0=:eyJkZWxldGVBZnRlckRheXMiOjcsInNjb3BlIjoianNzZGsiLCJkZWFkbGluZSI6MTUwMjc5MTczMX0=',
                 imghash: '',

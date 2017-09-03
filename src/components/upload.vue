@@ -2,7 +2,7 @@
 <div>
     <form :id="formId" :method="method" enctype="multipart/form-data">
         <input name="token" type="hidden" :value="token">
-        <input name="file" :id="pickerId" type="file" @change="upload" :accept="accept" />
+        <input name="file" :id="pickerId" type="file" @change="upload" :accept="accept" :multiple="multiple"/>
         <input name="accept" type="hidden" />
         <slot name="form">
         </slot>
@@ -36,6 +36,10 @@ export default {
             type: String,
             default: 'image/png, image/jpeg, image/gif'
         },
+        multiple: {
+            type: Boolean,
+            default: false
+        },
         callback: {
             type: Function,
             default: () => {
@@ -52,20 +56,23 @@ export default {
     },
     methods: {
         upload () {
-            let that = this
             this.$nextTick(() => {
                 let formData = new FormData(document.getElementById(this.formId))
-                this.$http.post(this.action, formData, {
-                    progress (e) {
-                        if (e.lengthComputable) {
-                            that.$emit('on-progress', e)
-                        }
+                if (this.multiple) {
+                    let i = 0
+                    let files = formData.getAll('file')
+                    let length = files.length
+                    for (; i < length; i++) {
+                        formData.set('file', files[i])
+                        this.$http.post(this.action, formData).then(res => {
+                            this.$emit('on-upload', res.body)
+                        })
                     }
-                }).then(res => {
-                    this.$emit('on-upload', res.body)
-                }, res => {
-                    this.$emit('on-error', res.body)
-                })
+                } else {
+                    this.$http.post(this.action, formData).then(res => {
+                        this.$emit('on-upload', res.body)
+                    })
+                }
             })
         }
     }
