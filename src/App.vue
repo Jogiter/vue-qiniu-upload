@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-        <upload :action="action" :token="token" @on-upload="uploadFile" :accept="accept" @on-error="uploadErr" @on-progress="progress">
+        <upload :action="action" :token="token" @on-upload="uploadFile" :multiple="multiple" :accept="accept" @on-error="uploadErr" @on-progress="progress">
             <template slot="form">
             </template>
             <template slot="picker">
@@ -10,11 +10,15 @@
         <div class="block">
             <h2>上传结果</h2>
             <div id="result">
-                <p>hash: {{imghash}}</p>
-                <p>key: {{imgkey}}</p>
+                <p>hash: {{hashes}}</p>
+                <p>key: {{keys}}</p>
             </div>
-            <img :src="imgHash" alt="imgHash" class="viewimg">
-            <img :src="imgKey" alt="imgKey" class="viewimg">
+            <div>
+                <img :src="item" alt="hashes" class="viewimg" v-for="item of hashes" :key="item">
+            </div>
+            <div>
+                <img :src="item" alt="keys" class="viewimg" v-for="item of keys" :key="item">
+            </div>
         </div>
         <div class="block" id="ajaxErr" v-show="uploadMsg.length">
             <h4>uploadMsg: </h4>
@@ -34,24 +38,17 @@
             return {
                 action: 'http://upload.qiniu.com/', // 替换自己的上传链接
                 accept: 'image/png, image/jpeg, image/gif',
-                token: 'QWYn5TFQsLLU1pL5MFEmX3s5DmHdUThav9WyOWOm:JcGnWGIzc0POt2eEWWqUUsW8bN0=:eyJkZWxldGVBZnRlckRheXMiOjcsInNjb3BlIjoianNzZGsiLCJkZWFkbGluZSI6MTUwMjc5MTczMX0=', // 从[http://jssdk.demo.qiniu.io/formdata]获取
-                imghash: '',
-                imgkey: '',
+                multiple: true,
+                token: 'QWYn5TFQsLLU1pL5MFEmX3s5DmHdUThav9WyOWOm:ZIpAGEJRtGVzfLjqDTjJwF4FbeY=:eyJkZWxldGVBZnRlckRheXMiOjcsInNjb3BlIjoianNzZGsiLCJkZWFkbGluZSI6MTUwNDQ0NDk1MH0=', // 从[http://jssdk.demo.qiniu.io/formdata]获取
+                hashes: [],
+                keys: [],
                 uploadMsg: []
-            }
-        },
-        computed: {
-            imgHash: function () {
-                return `http://7j1xky.com2.z0.glb.qiniucdn.com/${this.imghash}`
-            },
-            imgKey: function () {
-                return `http://7j1xky.com2.z0.glb.qiniucdn.com/${this.imgkey}`
             }
         },
         methods: {
             uploadFile (res) {
-                this.imghash = res.hash
-                this.imgkey = res.key
+                this.hashes.push(`http://7j1xky.com2.z0.glb.qiniucdn.com/${res.hash}`)
+                this.keys.push(`http://7j1xky.com2.z0.glb.qiniucdn.com/${res.key}`)
             },
             uploadErr (res) {
                 this.uploadMsg.push(JSON.stringify(res))
