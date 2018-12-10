@@ -21,7 +21,7 @@ import vueUpload from 'vue-qiniu-upload'
 Vue.component('vue-upload', vueUpload)
 ```
 
-> note: 需要从[http://jssdk.demo.qiniu.io/formdata]源码获取token
+> note: 需要从[源码获取token](http://jssdk.demo.qiniu.io/formdata)
 
 >上传照片后，显示时会翻转(关于img的orientation问题)，参见[图片基本处理](https://developer.qiniu.com/dora/manual/1279/basic-processing-images-imageview2):如果原图带有EXIF信息且包含Orientation字段，imageView2默认根据此字段的值进行自动旋转修正。 具备处理动态gif图片的能力
 
